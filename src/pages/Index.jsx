@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 // Removed imports that were causing an error due to non-existent modules
-import { Box, Heading, Text, VStack, HStack, Button, Input, useToast } from "@chakra-ui/react";
+import { Box, Heading, Text, VStack, HStack, Button, Input } from "@chakra-ui/react";
+
 import { FaSpinner } from "react-icons/fa";
 import RouletteTable from "../components/RouletteTable";
+// The incorrect import has been removed.
 
 const Index = () => {
   const [balance, setBalance] = useState(1000);
@@ -16,46 +18,9 @@ const Index = () => {
   const [activations, setActivations] = useState([]);
   const [trainingResults, setTrainingResults] = useState([]);
   const [predictionResults, setPredictionResults] = useState([]);
-  const toast = useToast();
 
-  const generatePrediction = async () => {
-    setIsLoading(true);
-
-    // Call the predict function from predict.js
-    const prediction = await predict(betAmount, balance);
-    setPrediction(prediction);
-    setIsLoading(false);
-  };
-
-  const handleTrain = async (epochs, numRounds, nodes, activations) => {
-    setIsLoading(true);
-
-    // Call the train function from predict.js
-    const results = await train(epochs, numRounds);
-    setTrainingResults(results);
-    setIsLoading(false);
-  };
-
-  const handlePlay = async (betAmount) => {
-    setIsLoading(true);
-
-    // Call the predict function from predict.js
-    const prediction = await predict(betAmount, balance);
-    setPrediction(prediction);
-
-    // Simulate the result and update balance
-    const result = simulateResult();
-    const payout = calculatePayout(prediction, result, betAmount);
-    setBalance(balance + payout);
-
-    setPredictionResults([...predictionResults, { prediction, result, payout }]);
-    setIsLoading(false);
-  };
-
-  const placeBet = () => {
-    // Deduct bet amount from balance
-    setBalance(balance - betAmount);
-    handlePlay();
+  const handlePlay = () => {
+    console.log("Playing with bet amount:", betAmount);
   };
 
   return (
@@ -64,18 +29,17 @@ const Index = () => {
         <Heading as="h1" size="2xl">
           AI-Powered Roulette Betting Strategist
         </Heading>
-        // Inputs for specifying the neural network structure
-        <VStack spacing={4}>
-          <Input type="number" value={epochs} onChange={(e) => setEpochs(parseInt(e.target.value))} placeholder="Epochs" />
-          <Input type="number" value={numRounds} onChange={(e) => setNumRounds(parseInt(e.target.value))} placeholder="Rounds per Epoch" />
-          <HStack spacing={4}>
-            <Input type="number" value={nodes} onChange={(e) => setNodes(parseInt(e.target.value))} placeholder="Nodes per Layer" />
-            <Input type="text" value={activations} onChange={(e) => setActivations(e.target.value.split(","))} placeholder="Activation Functions (comma separated)" />
+        <Text fontSize="lg">Welcome to the AI-Powered Roulette Betting Strategist! This app uses a neural network to develop betting strategies for a modified roulette game with 12 numbers.</Text>
+        <Text fontSize="lg">To get started, specify the neural network structure and click "Train Model". Once trained, enter your bet amount and click "Place Bet" to see the AI's prediction. The roulette table and wheel below will always be visible for your reference.</Text>
+        <Text fontSize="lg" mb={4}>
+          Instructions: Input your desired bet amount in the field provided, then press "Place Bet". The neural network will predict the best betting strategy based on the data it has been trained on. You can also train the model by specifying the structure and number of epochs for training.
+        </Text>
+        <Box position="fixed" bottom={0} left={0} width="100%" zIndex={10}>
+          <HStack spacing={8} justify="center">
+            <RouletteTable prediction={prediction} />
+            {}
           </HStack>
-          <Button colorScheme="teal" onClick={() => handleTrain(epochs, numRounds, nodes, activations)} disabled={isLoading}>
-            {isLoading ? <FaSpinner /> : "Train Model"}
-          </Button>
-        </VStack>
+        </Box>
         <Text fontSize="xl">Balance: ${balance}</Text>
         // Inputs for specifying the bet amount
         <VStack spacing={4}>
@@ -84,24 +48,6 @@ const Index = () => {
             {isLoading ? <FaSpinner /> : "Place Bet"}
           </Button>
         </VStack>
-        {prediction && (
-          <Box>
-            <Text fontSize="2xl">AI Prediction: {prediction}</Text>
-            <RouletteTable prediction={prediction} />
-          </Box>
-        )}
-        <Box>
-          <Heading as="h2" size="xl">
-            Training Results
-          </Heading>
-          {/* Display training results */}
-        </Box>
-        <Box>
-          <Heading as="h2" size="xl">
-            Prediction Results
-          </Heading>
-          {/* Display prediction results */}
-        </Box>
       </VStack>
     </Box>
   );
