@@ -110,13 +110,51 @@ def print_roulette_table(spin_result, spin_color):
             print(char, end="")
     print()
 
+def train_model(epochs, num_rounds, balance, mirrored_strategy, input_shape, num_layers, nodes_per_layer, activation_functions):
+    with mirrored_strategy.scope():
+        for epoch in range(epochs):
+            print(f"Epoch {epoch+1}/{epochs}")
+            balance = INITIAL_BALANCE
+            distributed_dataset = mirrored_strategy.experimental_distribute_dataset(
+                tf.data.Dataset.from_tensor_slices((format_input(np.array([int(balance > 0), 0, 0])), np.zeros((1, len(roulette.bet_types))))).batch(1)
+            )
+            for round_num in range(num_rounds):
+                @tf.function
+                def train_step(sequence, target):
+                    with tf.GradientTape() as tape:
+                        predictions = model(sequence, num_layers, nodes_per_layer, activation_functions, training=True)
+                        loss = model.loss(target, predictions)
+                    gradients = tape.gradient(loss, model.trainable_variables)
+                    model.optimizer.apply_gradients(zip(gradients, model.trainable_variables))
+                    return loss, predictions
+
+                sequence, target = next(iter(distributed_dataset))
+                loss, predictions = mirrored_strategy.run(train_step, args=(sequence, target))
+                bet_type = list(roulette.bet_types.keys())[tf.argmax(predictions[0])]
+                bet_amount = roulette.bet_values[np.random.randint(len(roulette.bet_values))]
+                print(f"Round {round_num+1}/{num_rounds}: Predicted bet: {bet_type} (${bet_amount})")
+
+                spin_result, spin_color, payout, balance = roulette.play_round(bet_type, bet_amount, balance)
+                print(f"Spin result: {spin_result} ({spin_color}), Payout: {payout}, Current balance: {balance}")
+            print(f"Epoch {epoch+1}/{epochs} completed. Final balance: {balance}")
+
+def play_model(balance, mirrored_strategy):
+    while balance > 0:
+        predictions = model(format_input(np.array([int(balance > 0), 0, 0])), training=False)
+        bet_type = list(roulette.bet_types.keys())[np.argmax(predictions[0])]
+        bet_amount = roulette.bet_values[np.random.randint(len(roulette.bet_values))]
+        print(f"Suggested bet: {bet_type} (${bet_amount})")
+        user_input = input('Did you win or lose? (win/lose):\n').lower()
+        if user_input == 'win':
+            balance += bet_amount * roulette.bet_types[bet_type]
+        elif user_input == 'lose':
+            balance -= bet_amount
+        print(f"Current balance: {balance}")
+
 while True:
     try:
-        distributed_dataset = mirrored_strategy.experimental_distribute_dataset(
-        tf.data.Dataset.from_tensor_slices((format_input(np.array([int(balance > 0), 0, 0])), np.zeros((1, len(roulette.bet_types))))).batch(1)
-        )
-        
-        mode = input('Enter "train" for training mode, "operate" for operation mode, "edit" for editing the model, or "exit" to quit:\n')
+        balance = int(input('Enter your available balance for gambling:\n'))
+        mode = input('Enter "train" for training mode, "play" for operation mode, "edit" for editing the model, or "exit" to quit:\n')
 
         if mode.lower() == 'exit':
             break
