@@ -1,0 +1,92 @@
+.roulette-wheel {
+  position: relative;
+  width: 400px;
+  height: 400px;
+  margin: 0 auto;
+}
+
+.wheel {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 10px solid #333;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+}
+
+.section {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 50%;
+  height: 50%;
+  transform-origin: 100% 100%;
+  clip-path: polygon(0 0, 100% 50%, 0 100%);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 20px;
+  font-size: 24px;
+  font-weight: bold;
+  color: #fff;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+.section.red {
+  background-color: #ff0000;
+}
+
+.section.black {
+  background-color: #000;
+}
+
+.section-1 {
+  transform: rotate(0deg);
+}
+
+.section-2 {
+  transform: rotate(30deg);
+}
+
+.section-3 {
+  transform: rotate(60deg);
+}
+
+.section-4 {
+  transform: rotate(90deg);
+}
+
+.section-5 {
+  transform: rotate(120deg);
+}
+
+.section-6 {
+  transform: rotate(150deg);
+}
+
+.section-7 {
+  transform: rotate(180deg);
+}
+
+.section-8 {
+  transform: rotate(210deg);
+}
+
+.section-9 {
+  transform: rotate(240deg);
+}
+
+.section-10 {
+  transform: rotate(270deg);
+}
+
+.section-11 {
+  transform: rotate(300deg);
+}
+
+.section-12 {
+  transform: rotate(330deg);
+}
