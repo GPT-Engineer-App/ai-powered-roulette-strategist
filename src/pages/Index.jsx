@@ -12,26 +12,23 @@ const Index = () => {
 
   const generatePrediction = async () => {
     setIsLoading(true);
-   
+
     await new Promise((resolve) => setTimeout(resolve, 1000));
     const randomNumber = Math.floor(Math.random() * 37);
     setPrediction(randomNumber);
     setIsLoading(false);
   };
 
-  const placeBet = () => {
-    if (betAmount > balance) {
-      toast({
-        title: "Insufficient balance",
-        status: "error",
-        duration: 2000,
-        isClosable: true,
-      });
-      return;
-    }
-    setBalance(balance - betAmount);
-    generatePrediction();
+  // Additional functions for handling training and playing will be implemented here
+  const handleTrain = async () => {
+    console.log("Training AI model...");
   };
+
+  const handlePlay = async () => {
+    console.log("Playing with AI model...");
+  };
+
+  const placeBet = () => {};
 
   return (
     <Box p={8}>
@@ -39,6 +36,11 @@ const Index = () => {
         <Heading as="h1" size="2xl">
           AI-Powered Roulette Betting Strategist
         </Heading>
+        <HStack spacing={4}>
+          <Button colorScheme="green" onClick={generatePrediction} disabled={isLoading}>
+            {isLoading ? <FaSpinner /> : "Generate Prediction"}
+          </Button>
+        </HStack>
         <Text fontSize="xl">Balance: ${balance}</Text>
         <HStack spacing={4}>
           <Input type="number" value={betAmount} onChange={(e) => setBetAmount(parseInt(e.target.value))} placeholder="Bet Amount" />
