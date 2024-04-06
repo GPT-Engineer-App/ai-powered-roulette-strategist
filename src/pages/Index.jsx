@@ -4,6 +4,7 @@ import { Box, Heading, Text, VStack, HStack, Button, Input } from "@chakra-ui/re
 
 import { FaSpinner } from "react-icons/fa";
 import RouletteTable from "../components/RouletteTable";
+import RouletteWheel from "../components/RouletteWheel";
 // The incorrect import has been removed.
 
 const Index = () => {
@@ -36,9 +37,11 @@ const Index = () => {
         </Text>
         <HStack spacing={8} justify="center">
           <RouletteTable prediction={prediction} />
+          <RouletteWheel />
         </HStack>
         <HStack spacing={8} justify="center">
           <RouletteTable prediction={prediction} />
+          <RouletteWheel />
         </HStack>
         <Text fontSize="xl" mt={4}>
           Balance: ${balance}
