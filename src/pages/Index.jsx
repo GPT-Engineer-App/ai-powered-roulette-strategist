@@ -34,14 +34,15 @@ const Index = () => {
         <Text fontSize="lg" mb={4}>
           Instructions: Input your desired bet amount in the field provided, then press "Place Bet". The neural network will predict the best betting strategy based on the data it has been trained on. You can also train the model by specifying the structure and number of epochs for training.
         </Text>
-        <Box position="fixed" bottom={0} left={0} width="100%" zIndex={10}>
-          <HStack spacing={8} justify="center">
-            <RouletteTable prediction={prediction} />
-            {}
-          </HStack>
-        </Box>
-        <Text fontSize="xl">Balance: ${balance}</Text>
-        // Inputs for specifying the bet amount
+        <HStack spacing={8} justify="center">
+          <RouletteTable prediction={prediction} />
+        </HStack>
+        <HStack spacing={8} justify="center">
+          <RouletteTable prediction={prediction} />
+        </HStack>
+        <Text fontSize="xl" mt={4}>
+          Balance: ${balance}
+        </Text>
         <VStack spacing={4}>
           <Input type="number" value={betAmount} onChange={(e) => setBetAmount(parseInt(e.target.value))} placeholder="Bet Amount" />
           <Button colorScheme="blue" onClick={() => handlePlay(betAmount)} disabled={isLoading}>
